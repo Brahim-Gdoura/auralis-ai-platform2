@@ -1,0 +1,96 @@
+T-Shirt A - Cotton, Short Sleeve, Blue, Size M
+T-Shirt B - Polyester, Long Sleeve, Red, Size L
+T-Shirt C - Linen, V-neck, Green, Size S
+T-Shirt D - Cotton Blend, Crew Neck, Black, Size XL
+Jeans A - Slim Fit, Dark Wash, Stretch, Size 32
+Jeans B - Regular Fit, Light Wash, Size 30
+Jeans C - Skinny, Ripped, Blue, Size 28
+Jeans D - Straight, Black, Non-stretch, Size 34
+Jacket A - Leather, Black, Zipper, Size M
+Jacket B - Bomber, Green, Pockets, Size L
+Jacket C - Denim, Blue, Button-up, Size S
+Jacket D - Windbreaker, Red, Hooded, Size XL
+Sneakers A - White, Lace-up, Rubber Sole, Size 42
+Sneakers B - Black, Slip-on, Cushioned, Size 41
+Sneakers C - Running, Mesh, Gray, Size 43
+Sneakers D - High-top, Canvas, Navy, Size 40
+Socks A - Cotton, Ankle Length, White
+Socks B - Wool, Crew Length, Gray
+Socks C - Bamboo, No-show, Black
+Socks D - Sport, Moisture-wicking, Multicolor
+Hat A - Fedora, Wool, Brown
+Hat B - Baseball Cap, Cotton, Blue
+Hat C - Beanie, Knitted, Navy
+Hat D - Sun Hat, Straw, Beige
+Scarf A - Silk, Red, Lightweight
+Scarf B - Wool, Gray, Thick
+Scarf C - Cashmere, Light Pink
+Scarf D - Polyester, Patterned, Green
+Belt A - Leather, Black, Adjustable
+Belt B - Canvas, Brown, Adjustable
+Belt C - Elastic, Black, Slim
+Belt D - Braided, Tan, Leather
+Sunglasses A - Aviator, UV Protection, Metal Frame
+Sunglasses B - Round, Polarized, Plastic Frame
+Sunglasses C - Cat Eye, Gradient, Gold Frame
+Sunglasses D - Sports, Shatterproof, Black
+Watch A - Analog, Leather Strap, Water Resistant
+Watch B - Digital, Rubber Strap, Stopwatch
+Watch C - Chronograph, Stainless Steel, Water Resistant
+Watch D - Smartwatch, Black, Fitness Tracking
+Bracelet A - Gold Plated, Chain, Adjustable
+Bracelet B - Silver, Beaded, Stretch
+Bracelet C - Leather, Braided, Brown
+Bracelet D - Charm, Multicolor, Adjustable
+Necklace A - Pendant, Gold, 18 inches
+Necklace B - Choker, Silver, 16 inches
+Necklace C - Layered, Rose Gold, 20 inches
+Necklace D - Statement, Beaded, Multicolor
+Perfume A - Floral, 50ml, Eau de Parfum
+Perfume B - Citrus, 100ml, Eau de Toilette
+Perfume C - Woody, 75ml, Eau de Parfum
+Perfume D - Spicy, 50ml, Eau de Toilette
+Shirt A - Linen, Button-up, White, Size M
+Shirt B - Cotton, Short Sleeve, Patterned, Size L
+Shirt C - Oxford, Long Sleeve, Blue, Size S
+Shirt D - Flannel, Checkered, Red, Size XL
+Skirt A - A-line, Knee Length, Black
+Skirt B - Pencil, Midi, Red
+Skirt C - Pleated, Mini, Navy
+Skirt D - Maxi, Floral, Green
+Dress A - Maxi, Floral Print, Sleeveless
+Dress B - Mini, Solid Color, Long Sleeve
+Dress C - Midi, Wrap Style, Beige
+Dress D - Bodycon, Stretch, Black
+Coat A - Wool, Double Breasted, Camel
+Coat B - Trench, Beige, Belted
+Coat C - Parka, Olive, Hooded
+Coat D - Peacoat, Navy, Buttoned
+Gloves A - Leather, Black, Touchscreen Compatible
+Gloves B - Wool, Gray, Lined
+Gloves C - Ski, Waterproof, Red
+Gloves D - Fingerless, Knitted, Brown
+Bag A - Leather Tote, Brown, Spacious
+Bag B - Backpack, Canvas, Blue
+Bag C - Clutch, Satin, Black
+Bag D - Messenger, Leather, Dark Brown
+Wallet A - Leather, Slim, Black
+Wallet B - RFID, Bifold, Brown
+Wallet C - Zipper, Canvas, Gray
+Wallet D - Trifold, Leather, Navy
+Shoes A - Loafers, Leather, Brown
+Shoes B - Boots, Suede, Black
+Shoes C - Sandals, Leather, Tan
+Shoes D - Heels, Patent, Red
+Earrings A - Stud, Diamond, Silver
+Earrings B - Hoop, Gold, Medium
+Earrings C - Dangle, Crystal, Rose Gold
+Earrings D - Ear Cuffs, Silver, Adjustable
+Ring A - Solitaire, Gold, Size 7
+Ring B - Band, Silver, Size 6
+Ring C - Cocktail, Gemstone, Size 8
+Ring D - Stackable, Mixed Metals, Adjustable
+Hat E - Bucket, Cotton, White
+Scarf E - Infinity, Wool, Charcoal
+Perfume E - Fresh, 60ml, Eau de Parfum
+Perfume F - Oriental, 90ml, Eau de Toilette

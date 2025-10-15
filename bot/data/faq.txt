@@ -1,0 +1,299 @@
+Q1: What is your shipping policy?
+A1: Free shipping on orders above $50. Standard shipping 3-7 business days.
+
+Q2: Can I return a product?
+A2: Yes, unused products can be returned within 30 days.
+
+Q3: How can I track my order?
+A3: A tracking number is sent via email once your order is shipped.
+
+Q4: Do you offer international shipping?
+A4: Yes, shipping fees apply based on location.
+
+Q5: What payment methods are accepted?
+A5: Credit card, debit card, PayPal, Apple Pay.
+
+Q6: How do I cancel an order?
+A6: Contact support within 24 hours of placing the order.
+
+Q7: Do you offer gift wrapping?
+A7: Yes, gift wrapping is available at checkout for an additional fee.
+
+Q8: Can I change my shipping address after placing an order?
+A8: You can change the address within 2 hours of placing the order by contacting support.
+
+Q9: How long does processing take?
+A9: Orders are processed within 1-2 business days before shipping.
+
+Q10: Are there any restocking fees for returns?
+A10: No, returns are free of restocking fees.
+
+Q11: Can I exchange a product?
+A11: Yes, exchanges are allowed within 30 days for items of equal value.
+
+Q12: How do I apply a discount code?
+A12: Enter the code at checkout to apply the discount.
+
+Q13: What should I do if I received a damaged item?
+A13: Contact support with photos of the damaged item for a replacement or refund.
+
+Q14: Do you offer bulk purchase discounts?
+A14: Yes, discounts are available for orders of 10+ items.
+
+Q15: Are gift cards available?
+A15: Yes, we offer digital gift cards in various denominations.
+
+Q16: How long is a gift card valid?
+A16: Gift cards are valid for 12 months from the date of purchase.
+
+Q17: Can I use multiple discount codes at once?
+A17: Only one discount code can be applied per order.
+
+Q18: Do you have a loyalty program?
+A18: Yes, earn points on every purchase that can be redeemed for discounts.
+
+Q19: How do I check my loyalty points balance?
+A19: Log in to your account to view your points balance.
+
+Q20: Can I combine loyalty points and discount codes?
+A20: Yes, points can be used in addition to a single discount code.
+
+Q21: Do you offer same-day shipping?
+A21: Same-day shipping is available for select products in certain locations.
+
+Q22: What carriers do you use for shipping?
+A22: We use UPS, FedEx, and USPS for domestic shipping.
+
+Q23: Can I schedule a delivery time?
+A23: Delivery scheduling is available during checkout where applicable.
+
+Q24: How do I change my account information?
+A24: Log in to your account and update your personal details under “Account Settings.”
+
+Q25: What should I do if I forgot my password?
+A25: Click “Forgot Password” on the login page and follow the instructions to reset it.
+
+Q26: Are your products eco-friendly?
+A26: Many of our products are made with sustainable materials. Check individual product descriptions.
+
+Q27: How do I care for my clothing items?
+A27: Follow the care instructions on the product label for best results.
+
+Q28: Do you sell refurbished products?
+A28: No, all products are new and authentic.
+
+Q29: Is my personal information secure?
+A29: Yes, we use SSL encryption and follow strict privacy policies.
+
+Q30: Can I get a tax invoice?
+A30: Yes, invoices are available in your account after purchase.
+
+Q31: Do you offer a warranty on products?
+A31: Warranty periods vary by product; check the product page for details.
+
+Q32: How do I report a defective item?
+A32: Contact support within 14 days with photos of the defect.
+
+Q33: Are your perfumes tested on animals?
+A33: No, we do not test our products on animals.
+
+Q34: Can I pre-order upcoming products?
+A34: Yes, pre-orders are available on select items with expected shipping dates.
+
+Q35: Do you provide size guides?
+A35: Yes, size charts are available on each product page.
+
+Q36: What should I do if a product is out of stock?
+A36: You can sign up for email notifications when it’s back in stock.
+
+Q37: Do you ship to P.O. Boxes?
+A37: Yes, P.O. Box shipping is available for USPS deliveries.
+
+Q38: Can I pick up my order in-store?
+A38: Yes, select “In-Store Pickup” at checkout where available.
+
+Q39: How do I leave a product review?
+A39: Log in to your account and click “Write a Review” on the product page.
+
+Q40: Can I edit my review after posting?
+A40: Yes, reviews can be edited from your account within 30 days.
+
+Q41: Do you offer seasonal sales?
+A41: Yes, seasonal sales occur multiple times a year.
+
+Q42: How can I subscribe to your newsletter?
+A42: Enter your email at the bottom of our website to subscribe.
+
+Q43: Can I unsubscribe from emails?
+A43: Yes, click “Unsubscribe” in any marketing email.
+
+Q44: Are your products limited edition?
+A44: Some products are limited edition; availability is noted on the product page.
+
+Q45: Do you offer student discounts?
+A45: Yes, students can get 10% off with a valid student ID.
+
+Q46: Can I request a custom product?
+A46: Custom products are available for certain items; contact support for details.
+
+Q47: How do I know if an item is genuine?
+A47: All items are 100% authentic and sourced directly from brands.
+
+Q48: Can I add items to my wishlist?
+A48: Yes, click “Add to Wishlist” on the product page while logged in.
+
+Q49: Do you offer corporate gifting options?
+A49: Yes, we provide special corporate packages; contact sales for details.
+
+Q50: Can I track my return?
+A50: Yes, a tracking number is sent for all return shipments.
+
+Q51: How long does it take to process a refund?
+A51: Refunds are processed within 5-7 business days after receiving the return.
+
+Q52: Can I change the quantity of an item after placing an order?
+A52: Changes are possible within 1 hour of placing the order by contacting support.
+
+Q53: Do you provide international gift cards?
+A53: Yes, digital gift cards can be used internationally.
+
+Q54: How do I report a missing item in my order?
+A54: Contact support immediately with your order number and item details.
+
+Q55: Can I pay using cryptocurrency?
+A55: Currently, we do not accept cryptocurrency.
+
+Q56: Are your materials hypoallergenic?
+A56: Many items are hypoallergenic; see product descriptions for details.
+
+Q57: Do you offer free samples?
+A57: Free samples are occasionally included in orders; check promotions.
+
+Q58: Can I request eco-friendly packaging?
+A58: Yes, select “Eco-Friendly Packaging” at checkout where available.
+
+Q59: How do I update my payment method?
+A59: Update your payment details in your account under “Payment Options.”
+
+Q60: Are backordered items charged immediately?
+A60: Payment is charged once the item is ready to ship.
+
+Q61: Can I gift an item directly to someone else?
+A61: Yes, enter the recipient’s shipping address during checkout.
+
+Q62: Do you offer seasonal gift sets?
+A62: Yes, seasonal gift sets are available during holidays.
+
+Q63: Can I schedule a subscription order?
+A63: Yes, subscription options are available for select products.
+
+Q64: Do you offer price matching?
+A64: Yes, we match prices for identical items from approved retailers.
+
+Q65: How do I delete my account?
+A65: Contact support to permanently delete your account.
+
+Q66: Do you offer repair services?
+A66: Certain items can be repaired; contact support for eligibility.
+
+Q67: Can I prepay for future orders?
+A67: Prepayment is not available; payment is collected at checkout.
+
+Q68: Are your products allergen-free?
+A68: Ingredients are listed on product pages for allergy awareness.
+
+Q69: Can I request gift receipts?
+A69: Yes, select “Include Gift Receipt” at checkout.
+
+Q70: How do I update my newsletter preferences?
+A70: Edit preferences from your account under “Email Settings.”
+
+Q71: Can I combine multiple items into one shipment?
+A71: Yes, items in the same order are shipped together.
+
+Q72: What should I do if my package is delayed?
+A72: Contact support with your tracking number for assistance.
+
+Q73: Do you have physical store locations?
+A73: Yes, visit our “Store Locator” page to find locations.
+
+Q74: Can I request a price adjustment if an item goes on sale?
+A74: Price adjustments are offered within 7 days of purchase.
+
+Q75: Do you offer refillable perfume options?
+A75: Yes, select refillable options on eligible perfume products.
+
+Q76: Can I leave instructions for gift messages?
+A76: Yes, add a message during checkout.
+
+Q77: How do I become a brand ambassador?
+A77: Apply via the “Join Us” page on our website.
+
+Q78: Can I request a product sample before purchase?
+A78: Samples are offered on select products; check promotions.
+
+Q79: How do I unsubscribe from SMS notifications?
+A79: Reply STOP to any marketing SMS to unsubscribe.
+
+Q80: Are all fragrances cruelty-free?
+A80: Yes, all our fragrances are cruelty-free.
+
+Q81: Do you restock popular items?
+A81: Popular items are restocked periodically; sign up for notifications.
+
+Q82: Can I pre-order seasonal collections?
+A82: Yes, seasonal collections are available for pre-order.
+
+Q83: How do I leave feedback on the website?
+A83: Use the “Feedback” form in the website footer.
+
+Q84: Can I get an expedited return?
+A84: Yes, express return shipping is available at an extra cost.
+
+Q85: Are there age restrictions for certain products?
+A85: Yes, some products require the purchaser to be 18+.
+
+Q86: Can I donate unwanted products?
+A86: Check our donation program page for eligible products.
+
+Q87: How often do you add new products?
+A87: New products are added weekly.
+
+Q88: Do you offer limited-time promotions?
+A88: Yes, promotions are regularly updated on our website.
+
+Q89: How do I contact customer service?
+A89: Email, phone, and live chat options are available on the “Contact Us” page.
+
+Q90: Can I purchase items in bulk for events?
+A90: Yes, bulk ordering is available; contact sales for assistance.
+
+Q91: Do you offer sample kits for perfumes?
+A91: Sample kits are available during promotions and special events.
+
+Q92: Can I request a specific delivery date?
+A92: Delivery dates can be requested for select shipping methods.
+
+Q93: Are your online prices the same as in-store?
+A93: Prices may vary; check the website for current online prices.
+
+Q94: Can I combine multiple orders into one shipment?
+A94: Orders placed separately cannot be merged after checkout.
+
+Q95: How do I know if a product is in stock?
+A95: Stock availability is shown on the product page.
+
+Q96: Do you offer express shipping internationally?
+A96: Yes, express shipping is available at an additional cost.
+
+Q97: Can I pre-schedule orders for holidays?
+A97: Yes, schedule orders during checkout where available.
+
+Q98: How do I leave a complaint about a product?
+A98: Contact support with your order number and issue description.
+
+Q99: Are your products vegan-friendly?
+A99: Yes, vegan options are clearly labeled on product pages.
+
+Q100: How do I become a newsletter subscriber?
+A100: Enter your email in the subscription box at the bottom of the website.
