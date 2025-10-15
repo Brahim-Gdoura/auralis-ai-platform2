@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Chatbot RAG</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    #chat { border: 1px solid #ccc; padding: 10px; height: 400px; overflow-y: auto; }
+    .user { color: blue; }
+    .bot { color: green; }
+    #input-container { margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+<h2>Chatbot RAG avec Mémoire</h2>
+
+<div id="chat"></div>
+
+<div id="input-container">
+  <input type="text" id="message" placeholder="Écris ton message..." style="width: 70%;" />
+  <button id="sendBtn">Envoyer</button>
+</div>
+
+<script>
+  // 🔹 Générer ou récupérer session_id
+  let sessionId = localStorage.getItem("session_id");
+  if (!sessionId) {
+    sessionId = crypto.randomUUID();
+    localStorage.setItem("session_id", sessionId);
+  }
+
+  const chatDiv = document.getElementById("chat");
+  const messageInput = document.getElementById("message");
+  const sendBtn = document.getElementById("sendBtn");
+
+  function appendMessage(sender, text) {
+    const p = document.createElement("p");
+    p.className = sender;
+    p.textContent = `${sender.toUpperCase()}: ${text}`;
+    chatDiv.appendChild(p);
+    chatDiv.scrollTop = chatDiv.scrollHeight;
+  }
+
+  // 🔹 Load previous chat history from backend
+  async function loadHistory() {
+    try {
+      const response = await fetch("http://127.0.0.1:5005/history", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session_id: sessionId })
+      });
+      const data = await response.json();
+      if (data.history) {
+        data.history.forEach(msg => {
+          appendMessage(msg.role, msg.content);
+        });
+      }
+    } catch (err) {
+      console.error("Erreur lors du chargement de l'historique", err);
+    }
+  }
+
+  async function sendMessage() {
+    const userMessage = messageInput.value.trim();
+    if (!userMessage) return;
+
+    appendMessage("user", userMessage);
+    messageInput.value = "";
+
+    try {
+      const response = await fetch("http://127.0.0.1:5005/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          session_id: sessionId,
+          query: userMessage
+        })
+      });
+
+      const data = await response.json();
+      appendMessage("bot", data.answer || "Erreur : pas de réponse");
+
+    } catch (err) {
+      appendMessage("bot", "Erreur : impossible de contacter le serveur");
+      console.error(err);
+    }
+  }
+
+  sendBtn.addEventListener("click", sendMessage);
+  messageInput.addEventListener("keydown", e => {
+    if (e.key === "Enter") sendMessage();
+  });
+
+  // 🔹 Load history on page load
+  loadHistory();
+</script>
+
+</body>
+</html>
