@@ -4,4 +4,3 @@ langchain-google-genai==2.1.12
 faiss-cpu==1.12.0
 pypdf==5.1.0
 google-generativeai==0.7.2
-google-ai-generativelanguage==0.7.0
