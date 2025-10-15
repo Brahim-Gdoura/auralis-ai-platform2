@@ -1,6 +1,7 @@
 import React, { Fragment, createContext } from "react";
 import { Navber, Footer, CartModal } from "../partials";
 import LoginSignup from "../auth/LoginSignup";
+import Chatbot from "../home/Chatbot";
 
 export const LayoutContext = createContext();
 
@@ -11,10 +12,10 @@ const Layout = ({ children }) => {
         <Navber />
         <LoginSignup />
         <CartModal />
-        {/* All Children pass from here */}
         {children}
       </div>
       <Footer />
+      <Chatbot />
     </Fragment>
   );
 };

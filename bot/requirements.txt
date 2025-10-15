@@ -1,5 +1,6 @@
-flask
-langchain
-faiss-cpu
-pypdf
-google-generativeai
+flask==3.0.3
+langchain==0.3.7
+langchain-google-genai==2.1.12
+faiss-cpu==1.12.0
+pypdf==5.1.0
+google-generativeai==0.7.2
