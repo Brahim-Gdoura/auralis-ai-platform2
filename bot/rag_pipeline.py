@@ -7,7 +7,7 @@ from langchain_community.document_loaders import TextLoader, PyPDFLoader
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain.chains import ConversationalRetrievalChain, RetrievalQA
+from langchain.chains import ConversationalRetrievalChain
 from langchain.llms.base import LLM
 from langchain.prompts import PromptTemplate
 from langchain.docstore.document import Document
@@ -103,34 +103,64 @@ def init_rag():
 retriever, llm, vectorstore = init_rag()
 
 
-def _create_qa_chain():
-    """Create a RetrievalQA chain with custom prompt"""
-    template = """You are Auralis, a friendly shopping assistant. Be brief, natural, and helpful.
+def _create_conversational_chain(memory):
+    """Create a ConversationalRetrievalChain with memory and custom prompts"""
+    
+    # Custom condense question prompt (for reformulating with history)
+    condense_template = """Given the following conversation history and a new question, 
+rephrase the new question to be a standalone question that captures all relevant context.
+
+Chat History:
+{chat_history}
+
+New Question: {question}
+
+Standalone Question:"""
+    
+    condense_prompt = PromptTemplate(
+        template=condense_template,
+        input_variables=["chat_history", "question"]
+    )
+    
+    # Custom QA prompt (for final answer generation)
+    qa_template = """You are Auralis, a friendly shopping assistant. Use the conversation history and context to provide personalized, helpful responses.
 
 RULES:
 1. Keep responses SHORT (2-3 sentences max)
-2. Ask ONLY 1 question if needed
+2. Reference previous conversation when relevant (e.g., "Based on what you mentioned earlier...")
 3. If context has price/stock info, include it
 4. NO bullet points - write naturally
 5. Use exact product details from context (name, price, stock)
-6. If info is in context, provide it directly - don't say you don't know
+6. If info is in context, provide it directly
+7. Build on previous answers to create continuity
 
-Context: {context}
+Context from documents:
+{context}
 
-Question: {question}
+Conversation History:
+{chat_history}
 
-Response (SHORT and helpful):"""
+Current Question: {question}
 
-    prompt = PromptTemplate(template=template, input_variables=["context", "question"])
-    
-    qa_chain = RetrievalQA.from_chain_type(
-        llm=llm,
-        chain_type="stuff",
-        retriever=retriever,
-        return_source_documents=True,
-        chain_type_kwargs={"prompt": prompt}
+Response (SHORT, personalized, and helpful):"""
+
+    qa_prompt = PromptTemplate(
+        template=qa_template,
+        input_variables=["context", "chat_history", "question"]
     )
-    return qa_chain
+    
+    # Create conversational chain with memory
+    chain = ConversationalRetrievalChain.from_llm(
+        llm=llm,
+        retriever=retriever,
+        memory=memory,
+        condense_question_prompt=condense_prompt,
+        combine_docs_chain_kwargs={"prompt": qa_prompt},
+        return_source_documents=True,
+        verbose=False
+    )
+    
+    return chain
 
 
 def get_or_create_chain(session_id: str):
@@ -139,11 +169,11 @@ def get_or_create_chain(session_id: str):
         return active_chats[session_id]
 
     memory = MongoConversationMemory(session_id=session_id)
-    qa_chain = _create_qa_chain()
+    conversational_chain = _create_conversational_chain(memory)
 
-    active_chats[session_id] = (qa_chain, memory)
-    print(f"🧠 New chain created for session {session_id}")
-    return qa_chain, memory
+    active_chats[session_id] = (conversational_chain, memory)
+    print(f"🧠 New conversational chain created for session {session_id}")
+    return conversational_chain, memory
 
 
 class RAGSystem:
@@ -156,80 +186,47 @@ class RAGSystem:
         self.vectorstore = vectorstore
 
     def query(self, user_query: str):
-        """Process user query with chitchat detection and query augmentation"""
+        """Process user query with chitchat detection and conversational context"""
         
         # Handle chitchat first
         chitchat_response = self._handle_chitchat(user_query)
         if chitchat_response:
+            # Save chitchat to memory too
+            self.memory.save_context(
+                {"input": user_query},
+                {"output": chitchat_response}
+            )
             return {
                 "result": chitchat_response,
                 "source_documents": [],
                 "type": "chitchat"
             }
         
-        # Augment query for better retrieval
-        print(f"\n📝 Original query: {user_query}")
-        augmented_queries = self._augment_query(user_query)
-        print(f"🔍 Augmented queries: {augmented_queries}")
+        # Use conversational chain (automatically uses memory and history)
+        print(f"\n📝 Query with history: {user_query}")
         
-        # Retrieve documents with deduplication
-        all_docs = []
-        seen_content = set()
-        
-        for aug_query in augmented_queries:
-            docs = self.vectorstore.similarity_search(aug_query, k=3)
-            for doc in docs:
-                if doc.page_content not in seen_content:
-                    all_docs.append(doc)
-                    seen_content.add(doc.page_content)
-        
-        print(f"📚 Retrieved {len(all_docs)} unique documents")
-        
-        if all_docs:
-            result = self.chain({"query": user_query})
-            result["type"] = "rag"
-            return result
-        else:
-            return {
-                "result": "I don't have specific information about that in my knowledge base. Could you rephrase your question or ask something else?",
-                "source_documents": [],
-                "type": "no_results"
-            }
-
-    def _augment_query(self, query: str) -> List[str]:
-        """Generate alternative query phrasings for better retrieval"""
-        query_lower = query.lower()
-        
-        gift_keywords = ['gift', 'present', 'recommend', 'suggest', 'what should i', 'help me find', 'looking for', 'need something']
-        is_gift_query = any(keyword in query_lower for keyword in gift_keywords)
-        
-        if is_gift_query:
-            augmentation_prompt = f"""Given this shopping query: "{query}"
-
-Generate 3 alternative search queries that would help find relevant products or gift options.
-Focus on product categories, occasions, and recipient types.
-
-For example:
-- If query is "I want to buy a gift", alternatives could be: "gift ideas products", "popular gift items", "best selling products"
-- If query is "what do you recommend", alternatives could be: "recommended products", "top products", "featured items"
-- If query is "gift for mom", alternatives could be: "mother gifts", "products for women", "mom birthday present"
-
-Return only the 3 alternatives, one per line, without numbering or explanation."""
-        else:
-            augmentation_prompt = f"""Given this user query: "{query}"
-
-Generate 3 alternative phrasings or related questions that have the same intent.
-Include synonyms and different ways someone might ask the same thing.
-
-Return only the 3 alternatives, one per line, without numbering or explanation."""
-
         try:
-            augmented = self.llm._call(augmentation_prompt)
-            alternatives = [line.strip() for line in augmented.split('\n') if line.strip()]
-            return [query] + alternatives[:3]
+            # The chain automatically handles conversation history
+            result = self.chain({"question": user_query})
+            
+            answer = result.get("answer", "")
+            source_docs = result.get("source_documents", [])
+            
+            print(f"✅ Generated answer with {len(source_docs)} sources")
+            
+            return {
+                "result": answer,
+                "source_documents": source_docs,
+                "type": "rag"
+            }
+            
         except Exception as e:
-            print(f"⚠️ Query augmentation failed: {e}")
-            return [query]
+            print(f"❌ Error in conversational chain: {e}")
+            return {
+                "result": "I apologize, but I encountered an error processing your request. Could you rephrase that?",
+                "source_documents": [],
+                "type": "error"
+            }
 
     def _handle_chitchat(self, query: str) -> Optional[str]:
         """Detect and respond to common chitchat patterns"""

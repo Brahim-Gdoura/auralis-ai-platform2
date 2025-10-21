@@ -6,14 +6,13 @@ from rag_pipeline import get_or_create_rag_system, get_or_create_chain
 from db import conversations
 
 app = Flask(__name__)
-CORS(app)  # 🔹 Active CORS pour toutes les routes
+CORS(app)
 
 
 @app.before_request
 def initialize():
     """Initialize RAG pipeline on first request"""
     try:
-        # Test if RAG system is accessible
         get_or_create_chain("test_init")
         print("✅ RAG pipeline ready!")
     except Exception as e:
@@ -22,7 +21,7 @@ def initialize():
 
 @app.route("/chat", methods=["POST"])
 def chat():
-    """Handle chat requests with session management and history"""
+    """Handle chat requests with full conversational memory"""
     try:
         data = request.json
         query = data.get("query", "")
@@ -34,10 +33,13 @@ def chat():
         if not query:
             return jsonify({"error": "query is required"}), 400
         
-        # Get or create RAG system for this session
-        rag_system = get_or_create_rag_system(session_id)
-        response = rag_system.query(query)
+        print(f"\n💬 Session {session_id}: {query}")
         
+        # Get RAG system with memory
+        rag_system = get_or_create_rag_system(session_id)
+        
+        # Process query (memory is automatically used)
+        response = rag_system.query(query)
         answer = response.get("result", "")
         
         # Extract and format source documents
@@ -48,31 +50,19 @@ def chat():
                 'metadata': doc.metadata
             })
         
-        # Save to MongoDB for history
-        conversations.insert_one({
-            "session_id": session_id,
-            "user_message": query,
-            "bot_response": answer,
-            "type": response.get("type", "unknown"),
-            "sources_count": len(sources)
-        })
-        
         return jsonify({
             "session_id": session_id,
             "answer": answer,
             "sources": sources,
-            "type": response.get("type", "unknown")
+            "type": response.get("type", "unknown"),
+            "has_memory": True
         })
     
     except Exception as e:
         print(f"❌ Error in chat endpoint: {e}")
+        import traceback
+        traceback.print_exc()
         return jsonify({"error": str(e)}), 500
-
-
-def get_or_create_rag_system(session_id: str):
-    """Get or create an enhanced RAG system for a session"""
-    from rag_pipeline import get_or_create_rag_system as _get_rag_system
-    return _get_rag_system(session_id)
 
 
 @app.route("/history", methods=["POST"])
@@ -89,12 +79,11 @@ def get_history():
         history_docs = list(conversations.find({"session_id": session_id}).sort("_id", 1))
         
         if not history_docs:
-            return jsonify({"history": []})
+            return jsonify({"history": [], "count": 0})
         
         # Format history as conversation pairs
         formatted = []
         for msg in history_docs:
-            # Convert ObjectId to string for JSON serialization
             timestamp_str = str(msg.get("_id", ""))
             
             formatted.append({
@@ -116,16 +105,40 @@ def get_history():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/clear", methods=["POST"])
+def clear_history():
+    """Clear conversation history for a session"""
+    try:
+        data = request.json
+        session_id = data.get("session_id")
+        
+        if not session_id:
+            return jsonify({"error": "session_id is required"}), 400
+        
+        # Get the RAG system and clear its memory
+        rag_system = get_or_create_rag_system(session_id)
+        rag_system.memory.clear()
+        
+        return jsonify({
+            "success": True,
+            "message": f"History cleared for session {session_id}"
+        })
+    
+    except Exception as e:
+        print(f"❌ Error clearing history: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route("/health", methods=["GET"])
 def health():
     """Health check endpoint"""
     try:
-        # Test if system is responsive
         rag_system = get_or_create_rag_system("health_check")
         return jsonify({
             "status": "ok",
-            "message": "RAG system is initialized and ready",
-            "rag_initialized": True
+            "message": "RAG system with conversational memory is ready",
+            "rag_initialized": True,
+            "memory_enabled": True
         })
     except Exception as e:
         print(f"⚠️ Health check failed: {e}")
@@ -138,7 +151,7 @@ def health():
 
 @app.route("/api/chat", methods=["POST"])
 def api_chat():
-    """Alternative API endpoint (compatible with partner's implementation)"""
+    """Alternative API endpoint"""
     try:
         data = request.get_json()
         message = data.get("message", "")
@@ -147,7 +160,6 @@ def api_chat():
         if not message:
             return jsonify({"error": "Message is required"}), 400
         
-        # Get or create RAG system for this session
         rag_system = get_or_create_rag_system(session_id)
         response = rag_system.query(message)
         
@@ -158,20 +170,12 @@ def api_chat():
                 "metadata": doc.metadata
             })
         
-        # Save to MongoDB
-        conversations.insert_one({
-            "session_id": session_id,
-            "user_message": message,
-            "bot_response": response.get("result", ""),
-            "type": response.get("type", "unknown"),
-            "endpoint": "api_chat"
-        })
-        
         return jsonify({
             "response": response.get("result", ""),
             "sources": sources,
             "type": response.get("type", "unknown"),
-            "session_id": session_id
+            "session_id": session_id,
+            "has_memory": True
         })
     
     except Exception as e:
@@ -179,32 +183,13 @@ def api_chat():
         return jsonify({"error": str(e)}), 500
 
 
-@app.route("/api/health", methods=["GET"])
-def api_health():
-    """Alternative health endpoint (compatible with partner's implementation)"""
-    try:
-        rag_system = get_or_create_rag_system("api_health_check")
-        return jsonify({
-            "status": "ok",
-            "rag_initialized": True
-        })
-    except Exception as e:
-        print(f"⚠️ API health check failed: {e}")
-        return jsonify({
-            "status": "error",
-            "rag_initialized": False
-        }), 500
-
-
 @app.errorhandler(404)
 def not_found(error):
-    """Handle 404 errors"""
     return jsonify({"error": "Endpoint not found"}), 404
 
 
 @app.errorhandler(500)
 def internal_error(error):
-    """Handle 500 errors"""
     return jsonify({"error": "Internal server error"}), 500
 
 
