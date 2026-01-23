@@ -45,11 +45,12 @@
   // 🔹 Load previous chat history from backend
   async function loadHistory() {
     try {
-      const response = await fetch("http://127.0.0.1:5005/history", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ session_id: sessionId })
-      });
+     const response = await fetch("http://127.0.0.1:5000/api/history", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ session_id: sessionId })
+});
+
       const data = await response.json();
       if (data.history) {
         data.history.forEach(msg => {
@@ -69,14 +70,15 @@
     messageInput.value = "";
 
     try {
-      const response = await fetch("http://127.0.0.1:5005/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          session_id: sessionId,
-          query: userMessage
-        })
-      });
+     const response = await fetch("http://127.0.0.1:5000/api/chat", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    session_id: sessionId,
+    query: userMessage
+  })
+});
+
 
       const data = await response.json();
       appendMessage("bot", data.answer || "Erreur : pas de réponse");
