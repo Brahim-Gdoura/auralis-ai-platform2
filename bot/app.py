@@ -36,8 +36,8 @@ def chat():
         # Get chain with memory for this session
         chain, memory = get_or_create_chain(session_id)
         
-        # Get response from RAG system
-        response = chain({"question": query})
+        # Use invoke instead of __call__ to avoid deprecation warning
+        response = chain.invoke({"question": query})
         answer = response["answer"]
         
         # Save to MongoDB
@@ -61,6 +61,8 @@ def chat():
     
     except Exception as e:
         print(f"Error in chat endpoint: {e}")
+        import traceback
+        traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/history', methods=['POST'])
@@ -102,4 +104,4 @@ def chat_legacy():
     return chat()
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=False, port=5000)
