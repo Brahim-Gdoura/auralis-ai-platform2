@@ -1,12 +1,80 @@
 import { useState, useRef, useEffect } from "react";
-import { MessageCircle, X, Send } from "lucide-react";
+import { MessageCircle, X, Send, ShoppingBag, Star } from "lucide-react";
+import './Chatbot.css';
+import auralisAvatar from "./Auralis_bot.png";
+
+// Product Card Component
+const ProductCard = ({ product }) => {
+  return (
+    <div className="product-card">
+      <div className="product-image-container">
+        <img 
+          src={product.image || "https://via.placeholder.com/300x200?text=Product+Image"} 
+          alt={product.name}
+          className="product-image"
+        />
+        {product.stock && product.stock < 10 && (
+          <div className="product-badge product-badge-limited">
+            Only {product.stock} left!
+          </div>
+        )}
+        {product.badge && (
+          <div className="product-badge product-badge-featured">
+            <Star className="badge-icon" />
+            {product.badge}
+          </div>
+        )}
+      </div>
+      
+      <div className="product-content">
+        <h4 className="product-name">{product.name}</h4>
+        {product.category && (
+          <p className="product-category">{product.category}</p>
+        )}
+        
+        {product.description && (
+          <p className="product-description">{product.description}</p>
+        )}
+        
+        <div className="product-footer">
+          <div className="product-price-container">
+            <span className="product-price">${product.price}</span>
+            {product.originalPrice && (
+              <span className="product-original-price">${product.originalPrice}</span>
+            )}
+          </div>
+          
+          {product.rating && (
+            <div className="product-rating">
+              <Star className="rating-icon" />
+              <span className="rating-text">{product.rating}</span>
+            </div>
+          )}
+        </div>
+        
+        {product.stock !== undefined && (
+          <div className="product-stock">
+            <span className={product.stock > 0 ? 'stock-available' : 'stock-unavailable'}>
+              {product.stock > 0 ? `✓ ${product.stock} in stock` : '✗ Out of stock'}
+            </span>
+          </div>
+        )}
+        
+        <button className="product-add-to-cart">
+          <ShoppingBag className="cart-icon" />
+          Add to Cart
+        </button>
+      </div>
+    </div>
+  );
+};
 
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
     {
       type: "bot",
-      text: "Hey! 👋 I'm Auralis, your shopping assistant. How can I help you today?",
+      text: "Hey there! 👋 I'm Auralis, your personal shopping companion. I'm here to help you discover amazing products tailored just for you! What are you looking for today?",
       timestamp: new Date(),
     },
   ]);
@@ -15,7 +83,6 @@ const Chatbot = () => {
   const [sessionId, setSessionId] = useState(null);
   const messagesEndRef = useRef(null);
 
-  // Initialize session ID on component mount
   useEffect(() => {
     let storedSessionId = localStorage.getItem("chatbot_session_id");
     if (!storedSessionId) {
@@ -23,8 +90,6 @@ const Chatbot = () => {
       localStorage.setItem("chatbot_session_id", storedSessionId);
     }
     setSessionId(storedSessionId);
-    
-    // Load chat history
     loadChatHistory(storedSessionId);
   }, []);
 
@@ -32,9 +97,7 @@ const Chatbot = () => {
     try {
       const response = await fetch("http://localhost:5000/api/history", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ session_id: sessionId }),
       });
 
@@ -77,9 +140,7 @@ const Chatbot = () => {
     try {
       const response = await fetch("http://localhost:5000/api/chat", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           message: messageToSend,
           session_id: sessionId 
@@ -93,6 +154,7 @@ const Chatbot = () => {
           type: "bot",
           text: data.response || data.answer,
           sources: data.sources,
+          products: data.products || [],
           timestamp: new Date(),
         };
         setMessages((prev) => [...prev, botMessage]);
@@ -103,7 +165,7 @@ const Chatbot = () => {
       console.error("Chat error:", error);
       const errorMessage = {
         type: "bot",
-        text: "Oops! Something went wrong. Please try again.",
+        text: "Oops! Something went wrong on my end. Let me try again! 🔄",
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorMessage]);
@@ -121,125 +183,113 @@ const Chatbot = () => {
 
   if (!isOpen) {
     return (
-      <button
-        onClick={() => setIsOpen(true)}
-        style={{ position: 'fixed', bottom: '24px', right: '24px', zIndex: 9999 }}
-        className="w-16 h-16 rounded-full shadow-xl flex items-center justify-center transition-all duration-300 hover:scale-110 bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 hover:shadow-2xl"
-      >
-        <MessageCircle className="w-8 h-8 text-white" strokeWidth={2} />
-        <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white animate-pulse"></div>
+      <button onClick={() => setIsOpen(true)} className="chatbot-toggle">
+        <MessageCircle className="toggle-icon" />
+        <div className="toggle-status-indicator"></div>
       </button>
     );
   }
 
   return (
-    <div
-      style={{ 
-        position: 'fixed', 
-        bottom: '24px', 
-        right: '24px', 
-        width: '380px', 
-        height: '600px',
-        zIndex: 9999 
-      }}
-      className="bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200"
-    >
+    <div className="chatbot-container">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 px-5 py-4 flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="relative">
-            <img 
-              src="https://api.dicebear.com/7.x/bottts/svg?seed=Auralis&backgroundColor=ffffff" 
-              alt="Auralis" 
-              className="w-10 h-10 rounded-full border-2 border-white shadow-md bg-white"
-            />
-            <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+      <div className="chatbot-header">
+        <div className="header-bg-shape header-bg-shape-1"></div>
+        <div className="header-bg-shape header-bg-shape-2"></div>
+        
+        <div className="header-content">
+          <div className="header-left">
+            <div className="avatar-container">
+              <div className="avatar-glow"></div>
+              <img 
+                src={auralisAvatar}
+                alt="Auralis" 
+                className="avatar-image"
+              />
+              <div className="avatar-status"></div>
+            </div>
+            <div className="header-info">
+              <h3 className="header-title">
+                Auralis
+                <span className="header-sparkle">✨</span>
+              </h3>
+              <p className="header-status">
+                <span className="status-dot"></span>
+                Always here to help
+              </p>
+            </div>
           </div>
-          <div>
-            <h3 className="text-white font-semibold text-base">Auralis</h3>
-            <p className="text-white/90 text-xs flex items-center">
-              <span className="w-1.5 h-1.5 bg-green-400 rounded-full mr-1.5 animate-pulse"></span>
-              Online
-            </p>
-          </div>
+          <button onClick={() => setIsOpen(false)} className="close-button">
+            <X className="close-icon" />
+          </button>
         </div>
-        <button
-          onClick={() => setIsOpen(false)}
-          className="text-white/90 hover:bg-white/20 rounded-full p-1.5 transition-all duration-200"
-        >
-          <X className="w-5 h-5" />
-        </button>
       </div>
 
       {/* Messages */}
-      <div 
-        className="flex-1 overflow-y-auto px-4 py-3 space-y-3 bg-gray-50"
-        style={{ maxHeight: 'calc(600px - 140px)' }}
-      >
+      <div className="messages-container">
         {messages.map((message, index) => (
-          <div
-            key={index}
-            className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}
-          >
-            <div className={`flex items-end space-x-2 max-w-[80%] ${message.type === "user" ? "flex-row-reverse space-x-reverse" : ""}`}>
-              {message.type === "bot" && (
-                <img 
-                  src="https://api.dicebear.com/7.x/bottts/svg?seed=Auralis&backgroundColor=ffffff" 
-                  alt="Auralis" 
-                  className="w-6 h-6 rounded-full flex-shrink-0 mb-1"
-                />
-              )}
-              <div>
-                <div
-                  className={`px-4 py-2.5 shadow-sm transition-all duration-200 hover:shadow-md ${
-                    message.type === "user"
-                      ? "bg-blue-500 text-white rounded-t-2xl rounded-l-2xl rounded-br-md"
-                      : "bg-white text-gray-800 rounded-t-2xl rounded-r-2xl rounded-bl-md border border-gray-200"
-                  }`}
-                >
-                  <p className="text-sm leading-relaxed">{message.text}</p>
-                </div>
-                {message.sources && message.sources.length > 0 && (
-                  <div className="mt-1.5 px-2.5 py-1 bg-blue-100 rounded-lg text-xs text-blue-700 inline-block">
-                    📚 {message.sources.length} source{message.sources.length > 1 ? 's' : ''}
-                  </div>
+          <div key={index}>
+            <div className={`message-wrapper ${message.type === "user" ? "message-user" : "message-bot"}`}>
+              <div className="message-content-wrapper">
+                {message.type === "bot" && (
+                  <img 
+                    src={auralisAvatar} 
+                    alt="Auralis" 
+                    className="message-avatar"
+                  />
                 )}
-                <div className={`flex items-center space-x-1 mt-1 px-1 ${message.type === "user" ? "justify-end" : "justify-start"}`}>
-                  <p className="text-xs text-gray-500">
-                    {message.timestamp.toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </p>
-                  {message.type === "user" && (
-                    <svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
-                    </svg>
+                <div>
+                  <div className={`message-bubble ${message.type === "user" ? "bubble-user" : "bubble-bot"}`}>
+                    <p className="message-text">{message.text}</p>
+                  </div>
+                  
+                  {message.sources && message.sources.length > 0 && (
+                    <div className="message-sources">
+                      📚 {message.sources.length} source{message.sources.length > 1 ? 's' : ''} referenced
+                    </div>
                   )}
+                  
+                  <div className={`message-timestamp ${message.type === "user" ? "timestamp-user" : "timestamp-bot"}`}>
+                    <p className="timestamp-text">
+                      {message.timestamp.toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </p>
+                    {message.type === "user" && (
+                      <svg className="checkmark" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"/>
+                      </svg>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
+            
+            {/* Product Cards */}
+            {message.products && message.products.length > 0 && (
+              <div className="products-container">
+                {message.products.map((product, idx) => (
+                  <ProductCard key={idx} product={product} />
+                ))}
+              </div>
+            )}
           </div>
         ))}
+        
         {isLoading && (
-          <div className="flex justify-start">
-            <div className="flex items-end space-x-2">
+          <div className="message-wrapper message-bot">
+            <div className="message-content-wrapper">
               <img 
-                src="https://api.dicebear.com/7.x/bottts/svg?seed=Auralis&backgroundColor=ffffff" 
+                src={auralisAvatar} 
                 alt="Auralis" 
-                className="w-6 h-6 rounded-full flex-shrink-0 mb-1"
+                className="message-avatar"
               />
-              <div className="bg-white rounded-t-2xl rounded-r-2xl rounded-bl-md px-4 py-3 shadow-sm border border-gray-200">
-                <div className="flex space-x-1">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                  <div
-                    className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                    style={{ animationDelay: "0.2s" }}
-                  ></div>
-                  <div
-                    className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                    style={{ animationDelay: "0.4s" }}
-                  ></div>
+              <div className="message-bubble bubble-bot">
+                <div className="typing-indicator">
+                  <div className="typing-dot"></div>
+                  <div className="typing-dot" style={{ animationDelay: '0.2s' }}></div>
+                  <div className="typing-dot" style={{ animationDelay: '0.4s' }}></div>
                 </div>
               </div>
             </div>
@@ -249,23 +299,23 @@ const Chatbot = () => {
       </div>
 
       {/* Input */}
-      <div className="px-4 py-3 bg-white border-t border-gray-200">
-        <div className="flex items-center space-x-2 bg-gray-100 rounded-full px-4 py-2.5 border border-gray-300 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-200 transition-all duration-200">
+      <div className="input-container">
+        <div className="input-wrapper">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Type a message..."
+            placeholder="Ask me anything..."
             disabled={isLoading}
-            className="flex-1 bg-transparent focus:outline-none text-sm disabled:cursor-not-allowed placeholder-gray-500 text-gray-800"
+            className="input-field"
           />
           <button
             onClick={sendMessage}
             disabled={!input.trim() || isLoading}
-            className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-full p-2 hover:scale-105 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-md"
+            className="send-button"
           >
-            <Send className="w-4 h-4" />
+            <Send className="send-icon" />
           </button>
         </div>
       </div>
