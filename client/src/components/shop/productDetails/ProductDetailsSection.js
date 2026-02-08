@@ -29,7 +29,7 @@ const ProductDetailsSection = (props) => {
   const [, setAlertq] = useState(false); // Alert when quantity greater than stock
 
   const [wList, setWlist] = useState(
-    JSON.parse(localStorage.getItem("wishList"))
+    JSON.parse(localStorage.getItem("wishList")),
   ); // Wishlist State Control
 
   useEffect(() => {
@@ -215,8 +215,49 @@ const ProductDetailsSection = (props) => {
                 </span>
               </div>
             </div>
-            <div className="my-4 md:my-6 text-gray-600">
-              {sProduct.pDescription}
+            <div className="my-4 md:my-6 text-gray-600 text-sm leading-relaxed">
+              <p className="mb-3">
+                {sProduct.pDescription ||
+                  "High-quality product with premium features and excellent durability."}
+              </p>
+            </div>
+            <div className="my-4 md:my-6 border-t border-b py-4 text-sm">
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">
+                    Product Code
+                  </p>
+                  <p className="text-gray-800 font-medium">
+                    {sProduct._id.slice(0, 8).toUpperCase()}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">
+                    Availability
+                  </p>
+                  <p
+                    className={`font-medium ${sProduct.pQuantity > 0 ? "text-green-600" : "text-red-600"}`}
+                  >
+                    {sProduct.pQuantity > 0
+                      ? `${sProduct.pQuantity} in stock`
+                      : "Out of Stock"}
+                  </p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">
+                    Shipping
+                  </p>
+                  <p className="text-gray-800">Free shipping available</p>
+                </div>
+                <div>
+                  <p className="text-gray-500 text-xs uppercase tracking-wider mb-1">
+                    Returns
+                  </p>
+                  <p className="text-gray-800">30-day return policy</p>
+                </div>
+              </div>
             </div>
             <div className="my-4 md:my-6">
               {+quantitiy === +sProduct.pQuantity ? (
@@ -250,7 +291,7 @@ const ProductDetailsSection = (props) => {
                               sProduct.pQuantity,
                               quantitiy,
                               setQuantitiy,
-                              setAlertq
+                              setAlertq,
                             )
                           }
                         >
@@ -275,7 +316,7 @@ const ProductDetailsSection = (props) => {
                               sProduct.pQuantity,
                               quantitiy,
                               setQuantitiy,
-                              setAlertq
+                              setAlertq,
                             )
                           }
                         >
@@ -384,7 +425,7 @@ const ProductDetailsSection = (props) => {
                           setQuantitiy,
                           setAlertq,
                           fetchData,
-                          totalCost
+                          totalCost,
                         )
                       }
                       style={{ background: "#303031" }}

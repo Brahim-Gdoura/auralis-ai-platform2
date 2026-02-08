@@ -30,7 +30,7 @@ const CategoryList = () => {
   return (
     <div className={`${data.categoryListDropdown ? "" : "hidden"} my-4`}>
       <hr />
-      <div className="py-1 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <div className="py-6 px-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {categories && categories.length > 0 ? (
           categories.map((item, index) => {
             return (
@@ -39,13 +39,18 @@ const CategoryList = () => {
                   onClick={(e) =>
                     history.push(`/products/category/${item._id}`)
                   }
-                  className="col-span-1 m-2 flex flex-col items-center justify-center space-y-2 cursor-pointer"
+                  className="col-span-1 flex flex-col items-center justify-center space-y-3 cursor-pointer transition-transform hover:scale-105"
                 >
-                  <img
-                    src={`${apiURL}/uploads/categories/${item.cImage}`}
-                    alt="pic"
-                  />
-                  <div className="font-medium">{item.cName}</div>
+                  <div className="w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-gray-200 hover:border-yellow-700 transition-all flex items-center justify-center bg-gray-100 shadow-md hover:shadow-lg">
+                    <img
+                      src={`${apiURL}/uploads/categories/${item.cImage}`}
+                      alt={item.cName}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="font-medium text-center text-sm md:text-base">
+                    {item.cName}
+                  </div>
                 </div>
               </Fragment>
             );
@@ -109,7 +114,9 @@ const FilterList = () => {
           <div className="flex flex-col space-y-2  w-2/3 lg:w-2/4">
             <label htmlFor="points" className="text-sm">
               Price (between 0 and 10$):{" "}
-              <span className="font-semibold text-yellow-700">{range}.00$</span>{" "}
+              <span className="font-semibold text-yellow-700">
+                {range}.00$
+              </span>{" "}
             </label>
             <input
               value={range}
