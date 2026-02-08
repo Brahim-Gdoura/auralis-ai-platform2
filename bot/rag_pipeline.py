@@ -7,35 +7,30 @@ from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.chains import ConversationalRetrievalChain, RetrievalQA
 from langchain.llms.base import LLM
 from langchain.prompts import PromptTemplate
-from google import genai
-from google.genai import types
+import google.generativeai as genai
 from memory import MongoConversationMemory
 
 active_chats = {}
 
 
-class GeminiGenAI(LLM):
-    model_name: str = "gemini-2.0-flash-exp"
+class GeminiLLM(LLM):
+    model_name: str = "gemini-2.5-flash"
     temperature: float = 0.7
-    client: object = None
-
+    
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
         if not api_key:
             raise ValueError("Missing GEMINI_API_KEY or GOOGLE_API_KEY")
-        object.__setattr__(self, "client", genai.Client(api_key=api_key))
+        genai.configure(api_key=api_key)
 
     @property
     def _llm_type(self) -> str:
-        return "gemini-genai"
+        return "gemini"
 
     def _call(self, prompt: str, stop: Optional[List[str]] = None) -> str:
-        contents = [types.Content(role="user", parts=[types.Part.from_text(text=prompt)])]
-        config = types.GenerateContentConfig(temperature=self.temperature, response_modalities=["TEXT"])
-        response = self.client.models.generate_content(
-            model=self.model_name, contents=contents, config=config
-        )
+        model = genai.GenerativeModel(self.model_name)
+        response = model.generate_content(prompt)
         return response.text
 
 
@@ -201,8 +196,10 @@ def build_rag():
     documents = text_splitter.split_documents(raw_docs)
     print(f"{len(documents)} chunks created")
 
+    print("Initializing embeddings model...")
     embeddings = HuggingFaceEmbeddings(
-        model_name="sentence-transformers/all-MiniLM-L6-v2"
+        model_name="sentence-transformers/all-MiniLM-L6-v2",
+        model_kwargs={'device': 'cpu'}
     )
 
     print("Building FAISS index...")
@@ -211,8 +208,8 @@ def build_rag():
     retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
 
     print("Initializing Gemini LLM...")
-    llm = GeminiGenAI(
-        model_name="gemini-2.0-flash-exp",
+    llm = GeminiLLM(
+        model_name="gemini-2.5-flash",
         temperature=0.7
     )
 
@@ -257,19 +254,57 @@ def get_or_create_chain(session_id: str):
     text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
     documents = text_splitter.split_documents(raw_docs)
 
-    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+    print(f"Initializing embeddings for session {session_id}...")
+    embeddings = HuggingFaceEmbeddings(
+        model_name="sentence-transformers/all-MiniLM-L6-v2",
+        model_kwargs={'device': 'cpu'}
+    )
+    
     vectorstore = FAISS.from_documents(documents, embeddings)
-    retriever = vectorstore.as_retriever()
+    retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
 
-    llm = GeminiGenAI(model_name="gemini-2.0-flash-exp", temperature=0.3)
+    llm = GeminiLLM(model_name="gemini-2.5-flash", temperature=0.7)
 
-    memory = MongoConversationMemory(session_id=session_id)
+    memory = MongoConversationMemory(
+        session_id=session_id,
+        output_key="answer"
+    )
+    
+    # ← AJOUTEZ CE PROMPT PERSONNALISÉ
+    from langchain.prompts import PromptTemplate
+    
+    qa_prompt = PromptTemplate(
+        template="""You are Auralis, a friendly shopping assistant. Be brief, natural, and helpful.
+
+Use the following context and chat history to answer the question.
+
+RULES:
+1. Keep responses SHORT (2-3 sentences max)
+2. Ask ONLY 1 question if needed
+3. If context has price/stock info, include it
+4. NO bullet points - write naturally
+5. Use exact product details from context (name, price, stock)
+6. If info is in context, provide it directly - don't say you don't know
+7. Be conversational and reference previous messages when relevant
+
+Chat History:
+{chat_history}
+
+Context: {context}
+
+Question: {question}
+
+Response (SHORT and helpful):""",
+        input_variables=["context", "chat_history", "question"]
+    )
+    
     chain = ConversationalRetrievalChain.from_llm(
         llm=llm,
         retriever=retriever,
         memory=memory,
         return_source_documents=True,
         output_key="answer",
+        combine_docs_chain_kwargs={"prompt": qa_prompt} 
     )
 
     active_chats[session_id] = (chain, memory)
